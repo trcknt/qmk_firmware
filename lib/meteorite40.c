@@ -78,7 +78,7 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         float rotated_x =  + mouse_report.x * cosf(rad) - mouse_report.y * sinf(rad);
         float rotated_y =  + mouse_report.x * sinf(rad) + mouse_report.y * cosf(rad);
 
-	    if (!scroll_mode) {  // Regular mode: apply scaling if enabled
+        if (!scroll_mode) {  // Regular mode: apply scaling if enabled
             if(meteorite_config.scaling_mode == 1){
                 //Calculate the mouse movement delta for each polling interval
                 //ポーリング周期ごとのマウスの移動距離を計算
@@ -109,7 +109,7 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
             mouse_y_acm -= custom_y;
 
             mouse_report.x = custom_x;
-	        mouse_report.y = custom_y;
+            mouse_report.y = custom_y;
 
         } else { // Scroll mode: accumulate scroll values
 
@@ -117,31 +117,31 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
             //スクロール分割係数を取得
             int16_t scroll_div = meteorite_get_scroll_div(meteorite_config.scroll_div);
 
-	        if (abs(rotated_x) > abs(rotated_y) *2) { // Horizontal scroll
+            if (abs(rotated_x) > abs(rotated_y) *2) { // Horizontal scroll
                 // Accumulate horizontal scroll movement
                 //水平スクロール移動を累積
-	        	scroll_h_acm += rotated_x;
+                scroll_h_acm += rotated_x;
 
-	        	if(abs(scroll_h_acm) > scroll_div){
-	        		custom_h = scroll_h_acm / scroll_div;
-	        		scroll_h_acm -= custom_h * scroll_div;
-	        	}
-	        } else { // Vertical scroll
+                if(abs(scroll_h_acm) > scroll_div){
+                    custom_h = scroll_h_acm / scroll_div;
+                    scroll_h_acm -= custom_h * scroll_div;
+                }
+            } else { // Vertical scroll
                 // Accumulate vertical scroll movement
                 //垂直スクロール移動を累積
-	        	scroll_v_acm += rotated_y;
+                scroll_v_acm += rotated_y;
 
-	        	if(abs(scroll_v_acm) > scroll_div){
-	        		custom_v = scroll_v_acm / scroll_div;
-	        		scroll_v_acm -= custom_v * scroll_div;
-	        	}
-	        }
+                if(abs(scroll_v_acm) > scroll_div){
+                    custom_v = scroll_v_acm / scroll_div;
+                    scroll_v_acm -= custom_v * scroll_div;
+                }
+            }
 
-	        mouse_report.x = 0;
-	        mouse_report.y = 0;
+            mouse_report.x = 0;
+            mouse_report.y = 0;
             mouse_report.h = custom_h * (meteorite_config.scroll_h_rev ? 1 : -1);
-		    mouse_report.v = custom_v * (meteorite_config.scroll_v_rev ? 1 : -1);
-	    }
+            mouse_report.v = custom_v * (meteorite_config.scroll_v_rev ? 1 : -1);
+        }
 
         #ifdef DEBUG
         if(mouse_report.x != 0 || mouse_report.y != 0){
