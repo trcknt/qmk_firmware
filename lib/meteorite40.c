@@ -26,7 +26,7 @@
 #define METEORITE_SCROLL_DIV_MAX 16
 
 #define METEORITE_ROTATION_DEFAULT 5
-#define METEORITE_ROTATION_ANGLE { -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75 }
+#define METEORITE_ROTATION_ANGLE { -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70 }
 
 uint16_t angle_array[] = METEORITE_ROTATION_ANGLE;
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
