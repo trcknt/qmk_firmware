@@ -81,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q     , KC_W     , KC_E     , KC_R     , KC_T     ,                         KC_Y     , KC_U     , KC_I     , KC_O     , KC_P     ,
     KC_A     , KC_S     , KC_D     , KC_F     , KC_G     ,                         KC_H     , KC_J     , KC_K     , KC_L     , KC_MINS  ,
     KC_Z     , KC_X     , KC_C     , KC_V     , KC_B     , MS_BTN1   , MS_BTN2   , KC_N     , KC_M     , KC_COMM  , KC_DOT   , KC_SLSH  ,
-    LT(4, KC_ESC), KC_NO,MT(MOD_LGUI, KC_TAB), MT(MOD_LSFT, KC_SPC), LT(1, KC_LNG1), LT(5, KC_LNG2), LT(2,KC_ENT), LT(3,KC_BSPC),KC_NO, KC_DEL
+    LT(4, KC_ESC), KC_NO,MT(MOD_LGUI, KC_TAB), MT(MOD_LSFT, KC_SPC), LT(1, KC_LNG1), LT(5, KC_LNG2), LT(2,KC_ENT), LT(3,KC_BSPC),KC_NO, QK_KB_9
   ),
 
   [1] = LAYOUT(
@@ -106,10 +106,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [4] = LAYOUT(
+    QK_KB_10 , _______  , _______  , _______  , _______  ,                         QK_KB_4  , _______  , _______  , _______  , QK_KB_11 ,
     _______  , _______  , _______  , _______  , _______  ,                         _______  , _______  , _______  , _______  , _______ ,
-    _______  , _______  , _______  , _______  , _______  ,                         _______  , _______  , _______  , _______  , _______ ,
-    _______  , _______  , _______  , _______  , _______  , QK_KB_4   , QK_KB_5   , _______  , _______  , _______  , _______  , _______ ,
-    _______  ,            _______  , _______  , QK_KB_9  , QK_KB_6   , QK_KB_7   , QK_KB_10  , _______ , _______  ,            _______
+    _______  , _______  , _______  , _______  , _______  , QK_KB_2   , QK_KB_3   , _______  , _______  , _______  , _______  , _______ ,
+    _______  ,            QK_KB_0  , QK_KB_1  , _______  , QK_KB_7   , QK_KB_8   , _______  , QK_KB_5  , QK_KB_6  ,            _______
   ),
 
   [5] = LAYOUT(
@@ -138,18 +138,18 @@ enum meteorite_keycodes {
     CPI_DEC    = QK_KB_0, //トラックボールのCPIを減少
     CPI_INC    = QK_KB_1, //トラックボールのCPIを増加
 
-    ROT_DEC    = QK_KB_3, //マウスセンサーのＹ軸を反時計回りに10度回転
-    ROT_INC    = QK_KB_4, //マウスセンサーのＹ軸を時計回りに10度回転
-    SCAL_MOD   = QK_KB_5, //マウスセンサーのスケーリング有効・無効
+    ROT_DEC    = QK_KB_2, //マウスセンサーのＹ軸を反時計回りに10度回転
+    ROT_INC    = QK_KB_3, //マウスセンサーのＹ軸を時計回りに10度回転
+    SCAL_MODE  = QK_KB_4, //マウスセンサーのスケーリング有効・無効
 
-    SCR_DEC    = QK_KB_6, //スクロールの感度を減少
-    SCR_INC    = QK_KB_7, //スクロールの感度を増加
+    SCR_DEC    = QK_KB_5, //スクロールの感度を減少
+    SCR_INC    = QK_KB_6, //スクロールの感度を増加
 
-	SCR_H_REV  = QK_KB_8, //水平のスクロール方向を反転
-    SCR_V_REV  = QK_KB_9, //垂直のスクロール方向を反転
-    SCR_MO     = QK_KB_10, //押している間スクロールモードが有効
+	SCR_H_REV  = QK_KB_7, //水平のスクロール方向を反転
+    SCR_V_REV  = QK_KB_8, //垂直のスクロール方向を反転
+    SCR_MO     = QK_KB_9, //押している間スクロールモードが有効
 
-	KBC_RST    = QK_KB_11, //設定をリセット
-    KBC_SAV    = QK_KB_12, //設定を保存
+	KBC_RST    = QK_KB_10, //設定をリセット
+    KBC_SAV    = QK_KB_11, //設定を保存
 };
 */
