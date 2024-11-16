@@ -20,7 +20,6 @@
 #include <math.h>
 
 // Default configuration values for mouse settings
-// マウス設定のデフォルト設定値
 #define METEORITE_CPI_DEFAULT 5
 #define METEORITE_CPI_MAX 32
 #define METEORITE_SCROLL_DIV_DEFAULT 5
@@ -28,21 +27,6 @@
 
 #define METEORITE_ROTATION_DEFAULT 5
 #define METEORITE_ROTATION_ANGLE { -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75 }
-/*
-const float angle_array[] = {
-    1.31f,  // -75 degrees
-    1.05f,  // -60 degrees
-    0.79f,  // -45 degrees
-    0.52f,  // -30 degrees
-    0.26f,  // -15 degrees
-    0.00f,  //  0 degrees
-   -0.26f,  //  15 degrees
-   -0.52f,  //  30 degrees
-   -0.79f,  //  45 degrees
-   -1.05f,  //  60 degrees
-   -1.31f   //  75 degrees
-};
-*/
 
 uint16_t angle_array[] = METEORITE_ROTATION_ANGLE;
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
@@ -54,12 +38,10 @@ static float scroll_h_acm = 0.0f; // Horizontal scroll accumulator
 static float scroll_v_acm = 0.0f; // Vertical scroll accumulator
 
 // Mouse position accumulators for precise tracking
-// マウスの位置調整用累積変数
 static float mouse_x_acm = 0.0f;
 static float mouse_y_acm = 0.0f;
 
 // Handle mouse movement and scroll modes
-// マウスの移動とスクロールモードの処理
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 
     if(mouse_report.x != 0 || mouse_report.y != 0){
@@ -70,7 +52,6 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         int16_t custom_v = 0;
 
         // Rotate mouse movement based on configured angle
-        // 設定された角度に基づいてマウス移動を回転
         float rad = angle_array[meteorite_config.rotation_ang] * (M_PI / 180.0f) * -1.0f;
         //float cos_rad = cosf(angle_array[meteorite_config.rotation_ang]);
         //float sin_rad = sinf(angle_array[meteorite_config.rotation_ang]);
@@ -81,30 +62,25 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         if (!scroll_mode) {  // Regular mode: apply scaling if enabled
             if(meteorite_config.scaling_mode == 1){
                 //Calculate the mouse movement delta for each polling interval
-                //ポーリング周期ごとのマウスの移動距離を計算
                 float delta = sqrt(rotated_x * rotated_x + rotated_y * rotated_y);
 
                 //Calculate a coefficient that ranges from 0.1 to 10 when delta is between 1 and 100.
-                //デルタが1〜100のとき、係数が0.1〜10になるように計算
                 //float scaling_factor =  0.1f * delta; //(0.099f * delta) + 0.2f;
                 rotated_x *= 0.1f * delta;
                 rotated_y *= 0.1f * delta;
             }
 
             // Clip the rotated values within -127 to 127 range
-            // -127から127の範囲に収まるようクリップ
             rotated_x = fmaxf(-127.0f, fminf(127.0f, rotated_x));
             rotated_y = fmaxf(-127.0f, fminf(127.0f, rotated_y));
 
             // Accumulate mouse position and extract integer values
-            // 累積位置を計算し整数値として抽出
             mouse_x_acm += rotated_x;
             mouse_y_acm += rotated_y;
             custom_x = (int16_t) mouse_x_acm;
             custom_y = (int16_t) mouse_y_acm;
 
             // Retain decimal portion for smoother movement
-            // 小数部分を保持して滑らかに動作
             mouse_x_acm -= custom_x;
             mouse_y_acm -= custom_y;
 
@@ -114,12 +90,10 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         } else { // Scroll mode: accumulate scroll values
 
             //Get Scroll Division Factor
-            //スクロール分割係数を取得
             int16_t scroll_div = meteorite_get_scroll_div(meteorite_config.scroll_div);
 
             if (abs(rotated_x) > abs(rotated_y) *2) { // Horizontal scroll
                 // Accumulate horizontal scroll movement
-                //水平スクロール移動を累積
                 scroll_h_acm += rotated_x;
 
                 if(abs(scroll_h_acm) > scroll_div){
@@ -128,7 +102,6 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
                 }
             } else { // Vertical scroll
                 // Accumulate vertical scroll movement
-                //垂直スクロール移動を累積
                 scroll_v_acm += rotated_y;
 
                 if(abs(scroll_v_acm) > scroll_div){
@@ -155,7 +128,6 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 }
 
 // Handle custom keycodes for adjusting configuration
-// 設定調整用のカスタムキーコードの処理
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
@@ -293,13 +265,11 @@ void pointing_device_init_kb(void) {
 
 uint16_t meteorite_get_cpi(uint8_t cpi) {
     // Convert CPI configuration to hardware-specific value
-    // CPI設定をハードウェア固有の値に変換
     return (cpi + 1) * 100;
 }
 
 uint16_t meteorite_get_scroll_div(uint8_t div) {
     // Calculate scroll division factor
-    // スクロール分割係数を計算
     return div * div * 2 + 10;
 }
 
