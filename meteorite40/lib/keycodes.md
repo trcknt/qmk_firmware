@@ -1,9 +1,4 @@
 # Meteorite: Special Keycodes
-
-* [English/英語](#english)
-* [日本語/Japanese](#japanese)
-
-<a id="english"></a>
 ## Special Keycodes
 
 | Keycode    | Value on Remap  | Hex      | Description                                                       |
@@ -21,7 +16,6 @@
 | `KBC_RST`  | `Kb 10`         | `0x7e0a` | Reset Meteorite settings                                          |
 | `KBC_SAV`  | `Kb 11`         | `0x7e0b` | Save Meteorite settings                                           |
 
-<a id="japanese"></a>
 ## 特殊キーコード
 
 | キーコード   | Remap上での表記  | 値       | 説明                                                               |
