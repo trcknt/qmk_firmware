@@ -12,7 +12,7 @@
     "url": "",
     "usb": {
         "device_version": "1.0.0",
-        "pid": "0x0003",
+        "pid": "0x0002",
         "vid": "0x8782"
     },
     "layouts": {
