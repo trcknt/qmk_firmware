@@ -4,7 +4,7 @@
 
 *A short description of the keyboard/project*
 
-* Keyboard Maintainer: [OnTheRock](https://github.com/iwk7273)
+* Keyboard Maintainer: [Hashikure-engineering](https://github.com/hashikure-engineering)
 * Hardware Supported: *The PCBs, controllers supported*
 * Hardware Availability: *Links to where you can find this hardware*
 

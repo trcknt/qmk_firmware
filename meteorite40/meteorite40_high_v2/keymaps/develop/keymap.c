@@ -17,6 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 
+host_os_t detected_os = HOST_OS_UNKNOWN;
+
+bool process_detected_host_os_kb(host_os_t os) {
+    detected_os = os;
+    return true;
+}
+
 //combo
 enum combos {
   CMB_ENT,
@@ -28,6 +35,7 @@ enum combos {
   CMB_C_LFT,
   CMB_C_RGT
 };
+
 
 const uint16_t PROGMEM enter_combo[]   = {KC_L, KC_MINS, COMBO_END};
 const uint16_t PROGMEM tab_combo[]     = {KC_Q, KC_W, COMBO_END};
@@ -53,7 +61,14 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
   switch(combo_index) {
     case CMB_C_LFT:
       if (pressed) {
-        tap_code16(LCMD(KC_LEFT));
+            switch(detected_os){
+                case HOST_OS_WINDOWS;
+                    tap_code(KC_HOME);
+                    break;
+                case HOST_OS_MACOS;
+                    tap_code16(LCMD(KC_LEFT));
+                    break;
+            }
       }
       break;
     case CMB_C_RGT:
