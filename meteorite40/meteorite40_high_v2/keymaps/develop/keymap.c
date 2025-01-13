@@ -17,11 +17,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 
-host_os_t detected_os = HOST_OS_UNKNOWN;
+os_variant_t detected_os = OS_UNSURE;
+static bool swap_executed = false;
 
-bool process_detected_host_os_kb(host_os_t os) {
+bool process_detected_host_os_user(os_variant_t os) {
     detected_os = os;
+    #ifdef DEBUG
+    switch (os) {
+        case OS_UNSURE:
+            uprintf("Detected OS: Unsure\n");
+            break;
+        case OS_WINDOWS:
+            uprintf("Detected OS: Windows\n");
+            break;
+        case OS_MACOS:
+            uprintf("Detected OS: macOS\n");
+            break;
+        case OS_LINUX:
+            uprintf("Detected OS: Linux\n");
+            break;
+        default:
+            uprintf("Detected OS: Unknown\n");
+            break;
+    }
+    #endif
+
     return true;
+};
+
+void matrix_scan_user(void) {
+    if (!swap_executed && detected_os == OS_WINDOWS) {
+        keymap_config.swap_lctl_lgui = keymap_config.swap_rctl_rgui = true;
+        swap_executed = true;
+        #ifdef DEBUG
+        uprintf("Swap GUI / Ctrl\n");
+        #endif
+    } else if(!swap_executed && detected_os == OS_MACOS) {
+        keymap_config.swap_lctl_lgui = keymap_config.swap_rctl_rgui = false;
+        swap_executed = true;
+        #ifdef DEBUG
+        uprintf("Unwap GUI / Ctrl\n");
+        #endif
+    }
 }
 
 //combo
@@ -35,7 +72,6 @@ enum combos {
   CMB_C_LFT,
   CMB_C_RGT
 };
-
 
 const uint16_t PROGMEM enter_combo[]   = {KC_L, KC_MINS, COMBO_END};
 const uint16_t PROGMEM tab_combo[]     = {KC_Q, KC_W, COMBO_END};
@@ -61,29 +97,58 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
   switch(combo_index) {
     case CMB_C_LFT:
       if (pressed) {
-            switch(detected_os){
-                case HOST_OS_WINDOWS;
-                    tap_code(KC_HOME);
-                    break;
-                case HOST_OS_MACOS;
-                    tap_code16(LCMD(KC_LEFT));
-                    break;
-            }
+        switch(detected_os){
+            case OS_WINDOWS:
+                tap_code(KC_HOME);
+                break;
+            case OS_MACOS:
+                tap_code16(LCMD(KC_LEFT));
+                break;
+            default:
+                break;
+        }
       }
       break;
     case CMB_C_RGT:
       if (pressed) {
-        tap_code16(LCMD(KC_RIGHT));
+        switch(detected_os){
+            case OS_WINDOWS:
+                tap_code(KC_END);
+                break;
+            case OS_MACOS:
+                tap_code16(LCMD(KC_RIGHT));
+                break;
+            default:
+                break;
+        }
       }
       break;
     case CMB_HOME:
       if (pressed) {
-        tap_code16(LCMD(KC_UP));
+        switch(detected_os){
+            case OS_WINDOWS:
+                tap_code16(LCTL(KC_HOME));
+                break;
+            case OS_MACOS:
+                tap_code16(LCMD(KC_UP));
+                break;
+            default:
+                break;
+        }
       }
       break;
     case CMB_END:
       if (pressed) {
-        tap_code16(LCMD(KC_DOWN));
+        switch(detected_os){
+            case OS_WINDOWS:
+                tap_code16(LCTL(KC_END));
+                break;
+            case OS_MACOS:
+                tap_code16(LCMD(KC_DOWN));
+                break;
+            default:
+                break;
+        }
       }
       break;
   }

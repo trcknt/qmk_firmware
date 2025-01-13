@@ -28,4 +28,4 @@
 #define DYNAMIC_KEYMAP_LAYER_COUNT 6
 
 /* debug for Mouse / Scroll and METEORITE config */
-//#define DEBUG
+#define DEBUG

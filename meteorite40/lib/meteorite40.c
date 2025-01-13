@@ -25,7 +25,7 @@
 #define METEORITE_SCROLL_DIV_DEFAULT 5
 #define METEORITE_SCROLL_DIV_MAX 16
 
-#define METEORITE_ROTATION_DEFAULT 5
+#define METEORITE_ROTATION_DEFAULT 7
 #define METEORITE_ROTATION_ANGLE { -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70 }
 
 uint16_t angle_array[] = METEORITE_ROTATION_ANGLE;
@@ -119,6 +119,7 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         #ifdef DEBUG
         if(mouse_report.x != 0 || mouse_report.y != 0){
             uprintf("x: %d, y: %d\n", mouse_report.x, mouse_report.y);
+                        uprintf("mouse_x_acm: %d, mouse_y_acm: %d\n", (int)(mouse_x_acm * 1000), (int)(mouse_y_acm * 1000));
         } else if(mouse_report.h != 0 || mouse_report.v != 0){
             uprintf("h: %d, v: %d\n", mouse_report.h, mouse_report.v);
         }
@@ -241,16 +242,15 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 uprintf("Key pressed: %u\n", keycode);
             }
             #endif
-        return true;
+        return process_record_user(keycode, record);
     }
 }
 
 void eeconfig_init_kb(void) {
-    meteorite_config.raw = eeconfig_read_kb();
-    if(meteorite_config.raw == 0){
-        meteorite_set_default_config();
-        eeconfig_update_kb(meteorite_config.raw);
-    }
+    //meteorite_config.raw = eeconfig_read_kb();
+    meteorite_set_default_config();
+    eeconfig_update_kb(meteorite_config.raw);
+
     eeconfig_init_user();
 }
 
