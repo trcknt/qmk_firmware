@@ -44,11 +44,11 @@ enum meteorite_keycodes {
     SCR_DEC    = QK_KB_5, //スクロールの感度を減少
     SCR_INC    = QK_KB_6, //スクロールの感度を増加
 
-	SCR_H_REV  = QK_KB_7, //水平のスクロール方向を反転
+    SCR_H_REV  = QK_KB_7, //水平のスクロール方向を反転
     SCR_V_REV  = QK_KB_8, //垂直のスクロール方向を反転
     SCR_MO     = QK_KB_9, //押している間スクロールモードが有効
 
-	KBC_RST    = QK_KB_10, //設定をリセット
+    KBC_RST    = QK_KB_10, //設定をリセット
     KBC_SAV    = QK_KB_11, //設定を保存
 };
 
