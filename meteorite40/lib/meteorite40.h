@@ -21,13 +21,13 @@
 typedef union {
     uint32_t raw;
     struct {
-        uint8_t cpi_val       : 5;
+        uint8_t cpi_val        : 5;
         uint8_t scroll_div     : 4;
         uint8_t rotation_ang   : 4;
         uint8_t scroll_h_rev   : 1;
         uint8_t scroll_v_rev   : 1;
         uint8_t scaling_mode   : 1;
-
+        uint8_t scroll_layer   : 3;
     };
 } meteorite_config_t;
 
@@ -48,8 +48,11 @@ enum meteorite_keycodes {
     SCR_V_REV  = QK_KB_8, //垂直のスクロール方向を反転
     SCR_MO     = QK_KB_9, //押している間スクロールモードが有効
 
-    KBC_RST    = QK_KB_10, //設定をリセット
-    KBC_SAV    = QK_KB_11, //設定を保存
+    SCR_LYR_DEC = QK_KB_10, //スクロールを有効にするレイヤーを一つ下げる
+    SCR_LYR_INC = QK_KB_11, //スクロールを有効にするレイヤーを一つ上げる
+
+    KBC_RST    = QK_KB_12, //設定をリセット
+    KBC_SAV    = QK_KB_13, //設定を保存
 };
 
 uint16_t meteorite_get_cpi(uint8_t cpi);

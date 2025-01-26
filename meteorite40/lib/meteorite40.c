@@ -24,6 +24,7 @@
 #define METEORITE_CPI_MAX 32
 #define METEORITE_SCROLL_DIV_DEFAULT 5
 #define METEORITE_SCROLL_DIV_MAX 16
+#define METEORITE_SCROLL_LAYER_DEFAULT 2
 
 #define METEORITE_ROTATION_DEFAULT 7
 #define METEORITE_ROTATION_ANGLE { -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70 }
@@ -34,6 +35,7 @@ uint16_t angle_array[] = METEORITE_ROTATION_ANGLE;
 meteorite_config_t meteorite_config;
 
 static bool scroll_mode = false; // Scroll mode flag
+static bool scroll_mode_layer = false; // Scroll mode by layer flag
 static float scroll_h_acm = 0.0f; // Horizontal scroll accumulator
 static float scroll_v_acm = 0.0f; // Vertical scroll accumulator
 
@@ -59,7 +61,7 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         float rotated_x =  + mouse_report.x * cosf(rad) - mouse_report.y * sinf(rad);
         float rotated_y =  + mouse_report.x * sinf(rad) + mouse_report.y * cosf(rad);
 
-        if (!scroll_mode) {  // Regular mode: apply scaling if enabled
+        if (!scroll_mode && !scroll_mode_layer) {  // Regular mode: apply scaling if enabled
             if(meteorite_config.scaling_mode == 1){
                 //Calculate the mouse movement delta for each polling interval
                 float delta = sqrt(rotated_x * rotated_x + rotated_y * rotated_y);
@@ -86,6 +88,11 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 
             mouse_report.x = custom_x;
             mouse_report.y = custom_y;
+
+            #ifdef DEBUG
+            uprintf("x: %d, y: %d    ", mouse_report.x, mouse_report.y);
+            uprintf("mouse_x_acm: %d, mouse_y_acm: %d\n", (int)(mouse_x_acm * 1000), (int)(mouse_y_acm * 1000));
+            #endif
 
         } else { // Scroll mode: accumulate scroll values
 
@@ -114,33 +121,27 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
             mouse_report.y = 0;
             mouse_report.h = custom_h * (meteorite_config.scroll_h_rev ? 1 : -1);
             mouse_report.v = custom_v * (meteorite_config.scroll_v_rev ? 1 : -1);
-        }
 
-        #ifdef DEBUG
-        if(mouse_report.x != 0 || mouse_report.y != 0){
-            uprintf("x: %d, y: %d\n", mouse_report.x, mouse_report.y);
-                        uprintf("mouse_x_acm: %d, mouse_y_acm: %d\n", (int)(mouse_x_acm * 1000), (int)(mouse_y_acm * 1000));
-        } else if(mouse_report.h != 0 || mouse_report.v != 0){
+            #ifdef DEBUG
             uprintf("h: %d, v: %d\n", mouse_report.h, mouse_report.v);
+            #endif
         }
-        #endif
     }
     return pointing_device_task_user(mouse_report);
 }
 
 // Handle custom keycodes for adjusting configuration
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
-
     switch (keycode) {
         case SCR_MO: // Toggle scroll mode
             if (record->event.pressed) {
                 scroll_mode = true;
-                mouse_x_acm = 0;
-                mouse_y_acm = 0;
+                //mouse_x_acm = 0;
+                //mouse_y_acm = 0;
             } else {
                 scroll_mode = false;
-                scroll_h_acm = 0;
-                scroll_v_acm = 0;
+                //scroll_h_acm = 0;
+                //scroll_v_acm = 0;
             }
             return false;
         case CPI_DEC:
@@ -217,6 +218,22 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 #endif
             }
             return false;
+        case SCR_LYR_DEC:
+            if(record->event.pressed){
+                meteorite_config.scroll_layer = (meteorite_config.scroll_layer - 2 + (DYNAMIC_KEYMAP_LAYER_COUNT - 1)) % (DYNAMIC_KEYMAP_LAYER_COUNT - 1) + 1;
+                #ifdef DEBUG
+                debug_meteorite_config(meteorite_config);
+                #endif
+            }
+            return false;
+        case SCR_LYR_INC:
+            if(record->event.pressed){
+                meteorite_config.scroll_layer = (meteorite_config.scroll_layer % (DYNAMIC_KEYMAP_LAYER_COUNT - 1)) + 1;
+                #ifdef DEBUG
+                debug_meteorite_config(meteorite_config);
+                #endif
+            }
+            return false;
         case KBC_RST:
             if(record->event.pressed){
                 meteorite_set_default_config();
@@ -246,10 +263,36 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+void matrix_scan_kb(void) {
+    // Check if scroll layer is active
+    if (layer_state_is(meteorite_config.scroll_layer)) {
+        scroll_mode_layer = true;
+        //mouse_x_acm = 0;
+        //mouse_y_acm = 0;
+    } else {
+        scroll_mode_layer = false;
+        //scroll_h_acm = 0;
+        //scroll_v_acm = 0;
+    }
+    matrix_scan_user();
+}
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    // If the keycode is an LT key and the layer number
+    if ((keycode & QK_LAYER_TAP) == QK_LAYER_TAP && ((keycode >> 8) & 0x0F) == meteorite_config.scroll_layer) {
+        #ifdef DEBUG
+        uprintf("change tapping term of scroll layer: %d \n", meteorite_config.scroll_layer);
+        #endif
+
+        return 130;
+    }
+    return TAPPING_TERM;
+}
+
 void eeconfig_init_kb(void) {
-    //meteorite_config.raw = eeconfig_read_kb();
     meteorite_set_default_config();
     eeconfig_update_kb(meteorite_config.raw);
+    meteorite_config.raw = eeconfig_read_kb();
 
     eeconfig_init_user();
 }
@@ -277,6 +320,7 @@ void meteorite_set_default_config(void){
     meteorite_config.cpi_val = METEORITE_CPI_DEFAULT;
     meteorite_config.scroll_div = METEORITE_SCROLL_DIV_DEFAULT;
     meteorite_config.rotation_ang = METEORITE_ROTATION_DEFAULT;
+    meteorite_config.scroll_layer = METEORITE_SCROLL_LAYER_DEFAULT;
     meteorite_config.scroll_v_rev = 0;
     meteorite_config.scroll_h_rev = 0;
     meteorite_config.scaling_mode = 0;
@@ -288,6 +332,7 @@ void debug_meteorite_config(meteorite_config_t config) {
     uprintf("  RAW          : %d\n", config.raw);
     uprintf("  CPI          : %d (%d)\n", config.cpi_val, meteorite_get_cpi(config.cpi_val));
     uprintf("  Scroll Div   : %d (%d)\n", config.scroll_div, meteorite_get_scroll_div(config.scroll_div));
+    uprintf("  Scroll layer : %d / %d\n", config.scroll_layer, DYNAMIC_KEYMAP_LAYER_COUNT - 1);
     uprintf("  Rot Angle    : %d (%d)\n", config.rotation_ang, angle_array[config.rotation_ang]);
     //uprintf("  Rot Angle    : %d\n", config.rotation_ang);
     uprintf("  Scroll H Rev : %d\n", config.scroll_h_rev);

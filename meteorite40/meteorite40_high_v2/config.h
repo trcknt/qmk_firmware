@@ -25,7 +25,10 @@
 #define ENCODER_B_PINS { F1, F5 }
 #define ENCODER_RESOLUTIONS { 4, 4 }
 
-#define DYNAMIC_KEYMAP_LAYER_COUNT 6
+#define DYNAMIC_KEYMAP_LAYER_COUNT 5
+
+#define TAPPING_TERM 200
+#define TAPPING_TERM_PER_KEY
 
 /* debug for Mouse / Scroll and METEORITE config */
-#define DEBUG
+//#define DEBUG
