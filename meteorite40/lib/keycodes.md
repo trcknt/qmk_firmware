@@ -13,8 +13,10 @@
 | `SCR_H_REV`| `Kb 7`          |  Reverses horizontal scroll direction                              |
 | `SCR_V_REV`| `Kb 8`          |  Reverses vertical scroll direction                                |
 | `SCR_MO`   | `Kb 9`          |  Scroll mode while key is pressed                                  |
-| `KBC_RST`  | `Kb 10`         |  Reset Meteorite settings                                          |
-| `KBC_SAV`  | `Kb 11`         |  Save Meteorite settings                                           |
+| `SCR_LYR_DEC`| `Kb 10`       |  Move the scroll-enabled layer one level down                      |
+| `SCR_LYR_INC`| `Kb 11`       |  Move the scroll-enabled layer one level up                        |
+| `KBC_RST`  | `Kb 12`         |  Reset Meteorite settings                                          |
+| `KBC_SAV`  | `Kb 13`         |  Save Meteorite settings                                           |
 
 ## 特殊キーコード
 
@@ -30,5 +32,7 @@
 | `SCR_H_REV`| `Kb 7`          | 水平スクロールの方向を反転                                             |
 | `SCR_V_REV`| `Kb 8`          | 垂直スクロールの方向を反転                                            |
 | `SCR_MO`   | `Kb 9`          | 押している間スクロールモードが有効                                      |
-| `KBC_RST`  | `Kb 10`         | Meteoriteの設定をリセット                                            |
-| `KBC_SAV`  | `Kb 11`         | Meteoriteの設定を保存                                               |
+| `SCR_LYR_DEC`| `Kb 10`       | スクロールを有効にするレイヤーを一つ下げる                               |
+| `SCR_LYR_INC`| `Kb 11`       | スクロールを有効にするレイヤーを一つ上げる                               |
+| `KBC_RST`  | `Kb 12`         | Meteoriteの設定をリセット                                            |
+| `KBC_SAV`  | `Kb 13`         | Meteoriteの設定を保存                                               |
