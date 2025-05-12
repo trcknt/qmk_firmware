@@ -22,6 +22,8 @@ static bool swap_executed = false;
 
 bool process_detected_host_os_user(os_variant_t os) {
     detected_os = os;
+
+    /*
     #ifdef DEBUG
     switch (os) {
         case OS_UNSURE:
@@ -41,6 +43,7 @@ bool process_detected_host_os_user(os_variant_t os) {
             break;
     }
     #endif
+    */
 
     return true;
 };
@@ -49,21 +52,25 @@ void matrix_scan_user(void) {
     if (!swap_executed && detected_os == OS_WINDOWS) {
         keymap_config.swap_lctl_lgui = keymap_config.swap_rctl_rgui = true;
         swap_executed = true;
+        /*
         #ifdef DEBUG
         uprintf("Swap GUI / Ctrl\n");
         #endif
+        */
     } else if(!swap_executed && detected_os == OS_MACOS) {
         keymap_config.swap_lctl_lgui = keymap_config.swap_rctl_rgui = false;
         swap_executed = true;
+        /*
         #ifdef DEBUG
         uprintf("Unwap GUI / Ctrl\n");
         #endif
+        */
     }
 }
 
 //combo
 enum combos {
-  CMB_ENT,
+  //CMB_ENT,
   CMB_TAB,
   CMB_LNG_1,
   CMB_LNG_2,
@@ -73,7 +80,7 @@ enum combos {
   CMB_C_RGT
 };
 
-const uint16_t PROGMEM enter_combo[]   = {KC_L, KC_MINS, COMBO_END};
+//const uint16_t PROGMEM enter_combo[]   = {KC_L, KC_MINS, COMBO_END};
 const uint16_t PROGMEM tab_combo[]     = {KC_Q, KC_W, COMBO_END};
 const uint16_t PROGMEM lang_1_combo[]  = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM lang_2_combo[]  = {KC_J, KC_K, COMBO_END};
@@ -83,7 +90,7 @@ const uint16_t PROGMEM c_left_combo[]  = {KC_LEFT, KC_UP, COMBO_END};
 const uint16_t PROGMEM c_right_combo[] = {KC_RIGHT, KC_DOWN, COMBO_END};
 
 combo_t key_combos[] = {
-  [CMB_ENT]    = COMBO(enter_combo, KC_ENT),
+  //[CMB_ENT]    = COMBO(enter_combo, KC_ENT),
   [CMB_TAB]    = COMBO(tab_combo, KC_TAB),
   [CMB_LNG_1]  = COMBO(lang_1_combo, KC_LANGUAGE_1),
   [CMB_LNG_2]  = COMBO(lang_2_combo, KC_LANGUAGE_2),

@@ -31,4 +31,4 @@
 #define TAPPING_TERM_PER_KEY
 
 /* debug for Mouse / Scroll and METEORITE config */
-//#define DEBUG
+#define DEBUG

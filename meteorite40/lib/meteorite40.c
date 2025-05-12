@@ -29,6 +29,8 @@
 #define METEORITE_ROTATION_DEFAULT 7
 #define METEORITE_ROTATION_ANGLE { -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70 }
 
+#define SCROLL_LAYER_TAPPING_TERM 120
+
 uint16_t angle_array[] = METEORITE_ROTATION_ANGLE;
 #define ANGLE_SIZE (sizeof(angle_array) / sizeof(uint16_t))
 
@@ -43,10 +45,23 @@ static float scroll_v_acm = 0.0f; // Vertical scroll accumulator
 static float mouse_x_acm = 0.0f;
 static float mouse_y_acm = 0.0f;
 
+//static int x_prev = 0;
+//static int y_prev = 0;
+
 // Handle mouse movement and scroll modes
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 
     if(mouse_report.x != 0 || mouse_report.y != 0){
+        /*
+        if((abs(mouse_report.x) + abs(mouse_report.y)) > (abs(x_prev) + abs(y_prev) + 1) * 4){
+            uprintf("### x:%3d, y:%3d, x_prev: %3d, y_prev: %3d ###\n", mouse_report.x, mouse_report.y, x_prev, y_prev);
+            mouse_report.x = x_prev;
+            mouse_report.y = y_prev;
+        } else {
+            x_prev = mouse_report.x;
+            y_prev = mouse_report.y;
+        };
+        */
 
         int16_t custom_x = 0;
         int16_t custom_y = 0;
@@ -62,10 +77,10 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         float rotated_y =  + mouse_report.x * sinf(rad) + mouse_report.y * cosf(rad);
 
         if (!scroll_mode && !scroll_mode_layer) {  // Regular mode: apply scaling if enabled
-            if(meteorite_config.scaling_mode == 1){
-                //Calculate the mouse movement delta for each polling interval
-                float delta = sqrt(rotated_x * rotated_x + rotated_y * rotated_y);
+            //Calculate the mouse movement delta for each polling interval
+            float delta = sqrt(rotated_x * rotated_x + rotated_y * rotated_y);
 
+            if(meteorite_config.scaling_mode == 1){
                 //Calculate a coefficient that ranges from 0.1 to 10 when delta is between 1 and 100.
                 //float scaling_factor =  0.1f * delta; //(0.099f * delta) + 0.2f;
                 rotated_x *= 0.1f * delta;
@@ -86,20 +101,24 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
             mouse_x_acm -= custom_x;
             mouse_y_acm -= custom_y;
 
+            #ifdef DEBUG
+            uprintf("x:%3d, y:%3d,  ", mouse_report.x, mouse_report.y);
+            uprintf("x_rot:%4d.%02d, ", (int)(rotated_x), abs((int)(rotated_x * 1000) % 100));
+            uprintf("y_rot:%4d.%02d,  ", (int)(rotated_y), abs((int)(rotated_y * 1000) % 100));
+            uprintf("x_acm:%5d, y_acm:%5d,  ", (int)(mouse_x_acm * 1000), (int)(mouse_y_acm * 1000));
+            uprintf("x_cus:%4d, y_cus:%4d,  ", custom_x, custom_y);
+            uprintf("delta:%3d.%02d\n", (int)delta, abs((int)(delta * 100) % 100));
+            #endif
+
             mouse_report.x = custom_x;
             mouse_report.y = custom_y;
-
-            #ifdef DEBUG
-            uprintf("x: %d, y: %d    ", mouse_report.x, mouse_report.y);
-            uprintf("mouse_x_acm: %d, mouse_y_acm: %d\n", (int)(mouse_x_acm * 1000), (int)(mouse_y_acm * 1000));
-            #endif
 
         } else { // Scroll mode: accumulate scroll values
 
             //Get Scroll Division Factor
             int16_t scroll_div = meteorite_get_scroll_div(meteorite_config.scroll_div);
 
-            if (abs(rotated_x) > abs(rotated_y) *2) { // Horizontal scroll
+            if (abs(rotated_x) > abs(rotated_y) * 2) { // Horizontal scroll
                 // Accumulate horizontal scroll movement
                 scroll_h_acm += rotated_x;
 
@@ -280,11 +299,13 @@ void matrix_scan_kb(void) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     // If the keycode is an LT key and the layer number
     if ((keycode & QK_LAYER_TAP) == QK_LAYER_TAP && ((keycode >> 8) & 0x0F) == meteorite_config.scroll_layer) {
+        /*
         #ifdef DEBUG
         uprintf("change tapping term of scroll layer: %d \n", meteorite_config.scroll_layer);
         #endif
+        */
 
-        return 130;
+        return SCROLL_LAYER_TAPPING_TERM;
     }
     return TAPPING_TERM;
 }
